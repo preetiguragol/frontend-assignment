@@ -11,7 +11,6 @@ import {
   ArcElement,
 } from "chart.js";
 
-// Register the necessary Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,ArcElement);
 import { Doughnut } from "react-chartjs-2";
 import { IoIosStats } from "react-icons/io";
@@ -49,7 +48,7 @@ export default function SkillTest() {
       },
       {
         label: "Your Percentile",
-        data: [null, null, null, null, null], // Start empty, updated dynamically
+        data: [null, null, null, null, null], 
         borderColor: "rgba(255, 99, 132, 1)",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         borderDash: [5, 5],
@@ -108,7 +107,7 @@ export default function SkillTest() {
   };
   useEffect(() => {
     
-    const percentilePosition = Math.round((percentile / 100) * 4); // Maps 0-100 percentile to 0-4 index range
+    const percentilePosition = Math.round((percentile / 100) * 4); 
     const newYourPercentileData = [null, null, null, null, null];
     newYourPercentileData[percentilePosition] = percentile;
 
