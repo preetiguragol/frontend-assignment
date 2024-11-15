@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-Install Dependencies using th following commands:
+Install Dependencies using the following commands:
 ```bash
 npm install react-icons 
 npm install react-chartjs-2 chart.js
