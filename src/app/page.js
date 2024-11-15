@@ -1,6 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  ArcElement,
+} from "chart.js";
+
+// Register the necessary Chart.js components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,ArcElement);
 import { Doughnut } from "react-chartjs-2";
 import { IoIosStats } from "react-icons/io";
 import { GiRibbonMedal } from "react-icons/gi";
@@ -8,7 +20,7 @@ import { LuFileSpreadsheet } from "react-icons/lu";
 import { BsFillTrophyFill } from "react-icons/bs";
 import { PiNotepadFill } from "react-icons/pi";
 import { TiTick } from "react-icons/ti";
-ChartJS.register(ArcElement, Tooltip, Legend);
+
 
 export default function SkillTest() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,6 +34,30 @@ export default function SkillTest() {
     { name: "Correct", value: 0 },
     { name: "Incorrect", value: 15 },
   ]);
+
+  const [chartData, setChartData] = useState({
+    labels: [0, 25, 50, 75, 100],
+    datasets: [
+      {
+        label: "Percentile Distribution",
+        data: [5, 15, 30, 20, 10],
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderWidth: 2,
+        pointRadius: 5,
+        pointBackgroundColor: "rgba(75, 192, 192, 1)",
+      },
+      {
+        label: "Your Percentile",
+        data: [null, null, null, null, null], // Start empty, updated dynamically
+        borderColor: "rgba(255, 99, 132, 1)",
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderDash: [5, 5],
+        pointRadius: 6,
+        pointBackgroundColor: "rgba(255, 99, 132, 1)",
+      },
+    ],
+  });
 
   const handleUpdateClick = () => setIsModalOpen(true);
 
@@ -70,7 +106,23 @@ export default function SkillTest() {
       setIsModalOpen(false); 
     }
   };
+  useEffect(() => {
+    
+    const percentilePosition = Math.round((percentile / 100) * 4); // Maps 0-100 percentile to 0-4 index range
+    const newYourPercentileData = [null, null, null, null, null];
+    newYourPercentileData[percentilePosition] = percentile;
 
+    setChartData((prevData) => ({
+      ...prevData,
+      datasets: [
+        prevData.datasets[0],
+        {
+          ...prevData.datasets[1],
+          data: newYourPercentileData,
+        },
+      ],
+    }));
+  }, [percentile]);
   const handleCancel = () => setIsModalOpen(false);
 
   return (
@@ -150,18 +202,30 @@ export default function SkillTest() {
             </div>
           </div>
           
-{/* Comparison Graph  */}
-          <div className="bg-white border border-gray-300 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-3">Comparison Graph</h3>
-            <p className="text-sm text-gray-500">
-              You scored 30% percentile which is lower than the average percentile
-              72% of all engineers who took this assessment.
-            </p>
-            <div className="mt-4 bg-gray-100 w-full h-60 flex justify-center items-center">
-              <p className="text-gray-500">[Graph Placeholder]</p>
-            </div>
+{/* Comparison Graph */}
+<div className="bg-white border border-gray-300 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold mb-3">Comparison Graph</h3>
+          <p className="text-sm text-gray-500">
+            You scored {percentile} percentile which is lower than the average percentile of 72% of all engineers who took this assessment.
+          </p>
+          <div className="mt-4 w-full h-60">
+            <Line
+              data={chartData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: true, position: "top" },
+                },
+                scales: {
+                  x: { grid: { display: false } },
+                  y: { grid: { color: "rgba(200, 200, 200, 0.3)" } },
+                },
+              }}
+            />
           </div>
-        </main>
+        </div>
+      </main>
 
         <div className="col-span-12 md:col-span-4 pl-4 space-y-6 mt-10">
           <div className="bg-white border border-gray-300 p-4 rounded-lg">
